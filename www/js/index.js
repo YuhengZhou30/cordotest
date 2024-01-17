@@ -8,7 +8,7 @@ function onDeviceReady() {
 function init() {
     $(".custom-button").click(addTask);
     $("#taskList").on("click", ".delete", deleteEle);
-    $("#taskList").on("click", ".edit", editTask); // Afegir un event listener per a l'edició
+    $("#taskList").on("click", ".edit", editTask); 
 }
 
 function deleteEle() {
@@ -19,7 +19,7 @@ function deleteEle() {
 
 function addTask() {
     var taskName = prompt("Ingrese el nombre de la tarea:");
-    if (taskName) { // Verificar que l'usuari no ha cancel·lat la caixa de diàleg
+    if (taskName) { 
         var newelem = $("<li>" + taskName + "<button class='edit'>Edit</button><button class='delete'>X</button></li>");
         $("#taskList").append(newelem).listview("refresh");
         saveTaskList();
@@ -31,7 +31,7 @@ function editTask() {
     var currentTaskName = listItem.text().trim();
     var newTaskName = prompt("Edit task:", currentTaskName.slice(0, -5));
 
-    if (newTaskName !== null) { // Verificar que l'usuari no ha cancel·lat la caixa de diàleg
+    if (newTaskName !== null) { 
         listItem.html(newTaskName + "<button class='edit'>Edit</button><button class='delete'>X</button>");
         saveTaskList();
     }
