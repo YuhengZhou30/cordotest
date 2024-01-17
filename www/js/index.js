@@ -1,43 +1,50 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
-
-// Wait for the deviceready event before using any of Cordova's device APIs.
-// See https://cordova.apache.org/docs/en/latest/cordova/events/events.html#deviceready
 document.addEventListener('deviceready', onDeviceReady, false);
 
 function onDeviceReady() {
     init();
+    loadTaskList();
 }
 
 function init() {
     $(".custom-button").click(addTask);
     $("#taskList").on("click", ".delete", deleteEle);
+    $("#taskList").on("click", ".edit", editTask); // Afegir un event listener per a l'edició
 }
 
 function deleteEle() {
     var listItem = $(this).closest("li");
     listItem.remove();
+    saveTaskList();
 }
 
 function addTask() {
-     var taskName = prompt("Ingrese el nombre de la tarea:");
+    var taskName = prompt("Ingrese el nombre de la tarea:");
+    if (taskName) { // Verificar que l'usuari no ha cancel·lat la caixa de diàleg
+        var newelem = $("<li>" + taskName + "<button class='edit'>Edit</button><button class='delete'>X</button></li>");
+        $("#taskList").append(newelem).listview("refresh");
+        saveTaskList();
+    }
+}
 
-    var newelem = $("<li>"+taskName+ "<button class='delete'>X</button></li>");
-    $("#taskList").append(newelem).listview("refresh");
+function editTask() {
+    var listItem = $(this).closest("li");
+    var currentTaskName = listItem.text().trim();
+    var newTaskName = prompt("Edit task:", currentTaskName.slice(0, -5));
+
+    if (newTaskName !== null) { // Verificar que l'usuari no ha cancel·lat la caixa de diàleg
+        listItem.html(newTaskName + "<button class='edit'>Edit</button><button class='delete'>X</button>");
+        saveTaskList();
+    }
+}
+
+function saveTaskList() {
+    var taskList = $("#taskList").html();
+    localStorage.setItem("taskList", JSON.stringify(taskList));
+}
+
+function loadTaskList() {
+    var storedTaskList = localStorage.getItem("taskList");
+    if (storedTaskList) {
+        $("#taskList").html(JSON.parse(storedTaskList));
+    }
 }
